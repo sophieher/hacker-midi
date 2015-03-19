@@ -9,6 +9,7 @@ h1, h2, h3, button {
     color: white;
     font-family: Raleway,"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 200;
+    text-shadow: 0 0 3px #000;
 }
 
 button {
@@ -24,10 +25,17 @@ button {
     font-size: 31px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin: 50px 0;
+    margin: 20px 0;
     transition: all .3s ease;
 }
-
+button.video {
+    background: rgb(58,122,176);
+    border: rgb(58,122,176);
+}
+button {
+    display: inline-block;
+    margin-right: 25px;
+}
 button:hover {
     background: #e05850;
     border: 2px solid #e05850;
