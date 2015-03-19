@@ -26,6 +26,16 @@ UNDERSENSITIVE = 120.0 / INPUT_BLOCK_TIME
 
 # if the noise was longer than this many blocks, it's not a 'tap'
 MAX_TAP_BLOCKS = 0.15 / INPUT_BLOCK_TIME
+TAP = ''
+LOOPING = True
+
+
+def stop():
+    LOOPING = False
+
+
+def get_tap():
+    return TAP
 
 
 def get_rms(block):
@@ -72,7 +82,7 @@ if __name__ == '__main__':
     input_stream = get_mic_input()
     output = mido.open_output()
 
-    while True:
+    while LOOPING:
         try:
             samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)
         except IOError as e:
@@ -92,15 +102,17 @@ if __name__ == '__main__':
         else:
             if 1 <= noisy_count <= MAX_TAP_BLOCKS:
                 tap_count += 1
-                # output.send(mido.Message('stop'))
                 note = analyse.midinum_from_pitch(pitch)
                 note_on = pitch_to_midi(note, amplitude)
                 output.send(note_on)
 
-                print '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
+                TAP = '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
             # too quiet
             noisy_count = 0
             quiet_count += 1
             if quiet_count > UNDERSENSITIVE:
                 # lower sensitivity by 90%
                 tap_threshold *= 0.9
+    output.send(mido.Message('stop'))
+    output.mido.close_output()
+    exit()
