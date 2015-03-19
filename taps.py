@@ -97,7 +97,6 @@ if __name__ == '__main__':
                 velocity = int(math.log(amplitude) * -20) - 32
                 note_on = mido.Message('note_on', note=60, velocity=velocity)
                 # output.send(note_on)
-                song.append(note_on)
                 output.send(note_on)
                 print '{count}: TAP! @ {pitch} Hz velocity: {velocity}'.format(count=tap_count, pitch=(math.ceil(pitch) or 'no pitch'), msg=note_on, amplitude=amplitude, velocity=velocity)
             # too quiet
