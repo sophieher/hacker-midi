@@ -1,0 +1,108 @@
+body {
+    padding: 0;
+    margin: 0;
+    background: url(http://i.imgur.com/jaPvqFX.gif) 50% 0% / cover;
+}
+
+h1, h2, h3, button {
+    margin: 0 auto;
+    color: white;
+    font-family: Raleway,"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 200;
+}
+
+button {
+    display: block;
+    background: #da2a56;
+    border: 2px solid #da2a56;
+    color: #fff;
+    border-radius: 25px;
+    padding: 14px 36px 13px;
+    line-height: 1;
+    font-family: Raleway,"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 50px 0;
+    transition: all .3s ease;
+}
+
+button:hover {
+    background: #e05850;
+    border: 2px solid #e05850;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover, button:active, button:focus {
+    outline: 0!important;
+}
+
+h1 {
+    font-size: 32px;
+    line-height: 44px;
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    margin-bottom: 50px;
+}
+
+.main-left, .main-right {
+    margin: 0;
+    padding: 50px 130px;
+}
+
+.main-left {
+    float: left;
+    width: 30%;
+    margin-top: 50px;
+}
+
+.main-right {
+    float: right;
+    width: 30%;
+}
+
+.brand {
+    margin-bottom: 60px;
+}
+
+.brand span {
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 24px;
+    color: white;
+    font-weight: 800;
+    padding-left: 66px;
+}
+
+.brand img {
+    width: 50px;
+    position: absolute;
+    top: 92px;
+}
+
+h2, h3 {
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    margin-bottom: 50px;
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.main-right img {
+    width: 600px;
+    position: absolute;
+    top: 180px;
+    right: 160px;
+    border-radius: 30px;
+}
+.wrapper {
+      background: url(https://moltin.com/addons/shared_addons/themes/moltin/img/bg-light.svg) 50% 0% / cover;
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      opacity: 0.7;
+      z-index: -1;
+}
