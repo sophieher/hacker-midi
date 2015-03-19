@@ -9,7 +9,9 @@ import analyse
 import mido
 import time
 import numpy as np
+import collections
 
+import commands
 from midi import pitch_to_midi
 
 SAMPLING_RATE = 44100
@@ -17,7 +19,7 @@ SAMPLING_RATE = 44100
 # Adjust as necessary
 INPUT_BLOCK_TIME = 0.05
 INITIAL_TAP_THRESHOLD = 0.010  # Default value is 0.010
-INPUT_FRAMES_PER_BLOCK = int(SAMPLING_RATE * INPUT_BLOCK_TIME)
+INPUT_FRAMES_PER_BLOCK = int(SAMPLING_RATE * INPUT_BLOCK_TIME * 3)
 
 # if we get this many loud blocks in a row, raise the tap threshold
 OVERSENSITIVE = 15.0 / INPUT_BLOCK_TIME
@@ -72,11 +74,14 @@ if __name__ == '__main__':
     input_stream = get_mic_input()
     output = mido.open_output()
 
+    state = commands.getoutput("osascript -e 'tell application \"iTunes\" to player state as string'")
+    blocks = collections.deque(maxlen=5)
+
     while True:
         try:
             samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)
         except IOError as e:
-            print e
+            print('poop', e)
             noisy_count = 1
             continue
 
@@ -90,17 +95,33 @@ if __name__ == '__main__':
                 # raise sensitivity by 110%
                 tap_threshold *= 1.1
         else:
-            if 1 <= noisy_count <= MAX_TAP_BLOCKS:
-                tap_count += 1
-                # output.send(mido.Message('stop'))
-                note = analyse.midinum_from_pitch(pitch)
-                note_on = pitch_to_midi(note, amplitude)
-                output.send(note_on)
+            if 1 <= noisy_count <= MAX_TAP_BLOCKS and amplitude > 0.001:
+                blocks.append(True)
+            else:
+                blocks.append(False)
+                # too quiet
+                noisy_count = 0
+                quiet_count += 1
+                if quiet_count > UNDERSENSITIVE:
+                    # lower sensitivity by 90%
+                    tap_threshold *= 0.7
 
-                print '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
-            # too quiet
-            noisy_count = 0
-            quiet_count += 1
-            if quiet_count > UNDERSENSITIVE:
-                # lower sensitivity by 90%
-                tap_threshold *= 0.9
+        on_blocks = len([x for x in blocks if x is True])
+        off_blocks = len([x for x in blocks if x is False])
+        print(on_blocks)
+        if on_blocks >= 2 and off_blocks > 0:
+            if state == "playing":
+                commands.getoutput("osascript -e 'tell application \"iTunes\" to pause'")
+                state = 'paused'
+            elif state == "paused":
+                commands.getoutput("osascript -e 'tell application \"iTunes\" to play'")
+                state = 'playing'
+            print(blocks)
+            blocks.clear()
+            print('clear', blocks)
+
+            time.sleep(0.5)
+            try:
+                input_stream.read(INPUT_FRAMES_PER_BLOCK)
+            except Exception as e:
+                print('ignored error during sleep', e)
