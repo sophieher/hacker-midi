@@ -135,3 +135,9 @@ padding-bottom: 150px
 a {
     text-decoration: none;
 }
+.tinyurl {
+    position: absolute;
+    top: 240px;
+    right: 50px;
+    font-size: 40px;
+}
