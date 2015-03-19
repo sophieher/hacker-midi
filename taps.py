@@ -6,7 +6,11 @@ import pyaudio
 import struct
 import math
 import analyse
+import mido
+import time
 import numpy as np
+
+from midi import pitch_to_midi
 
 SAMPLING_RATE = 44100
 
@@ -66,8 +70,9 @@ if __name__ == '__main__':
     tap_count = 0
 
     input_stream = get_mic_input()
+    output = mido.open_output()
 
-    for i in range(1000):
+    while True:
         try:                
             samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)         
         except IOError, e:                              
@@ -87,7 +92,11 @@ if __name__ == '__main__':
             if 1 <= noisy_count <= MAX_TAP_BLOCKS:
                 tap_count += 1
                 pitch = determine_pitch(samples)
-                print '{count}: TAP! @ {pitch} Hz'.format(count=tap_count, pitch=(pitch or 'no pitch'))
+                # output.send(mido.Message('stop'))
+                note_on = pitch_to_midi(pitch, amplitude)
+                output.send(note_on)
+
+                print '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
             # too quiet
             noisy_count = 0
             quiet_count += 1
