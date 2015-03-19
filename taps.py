@@ -49,14 +49,14 @@ def get_rms(block):
 
 def get_mic_input():
     pa = pyaudio.PyAudio()
-    input_stream = pa.open(format=pyaudio.paInt16, channels=2, rate=SAMPLING_RATE,  input=True, frames_per_buffer=INPUT_FRAMES_PER_BLOCK)
+    input_stream = pa.open(format=pyaudio.paInt16, channels=1, rate=SAMPLING_RATE,  input=True, frames_per_buffer=INPUT_FRAMES_PER_BLOCK)
     return input_stream
 
 
 def determine_pitch(raw_samples):
     # SoundAnalyse needs array of samples in 16-bit format for pitch detection
     samples = np.fromstring(raw_samples, dtype=np.int16)
-    return analyse.detect_pitch(samples)
+    return analyse.detect_pitch(samples, ratio=1.0)
 
 
 if __name__ == '__main__':
