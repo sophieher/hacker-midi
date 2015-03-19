@@ -5,12 +5,14 @@
 import pyaudio
 import struct
 import math
+import analyse
+import numpy as np
 
 SAMPLING_RATE = 44100
 
 # Adjust as necessary
 INPUT_BLOCK_TIME = 0.05
-INITIAL_TAP_THRESHOLD = 0.015 # Default value is 0.010
+INITIAL_TAP_THRESHOLD = 0.010 # Default value is 0.010
 INPUT_FRAMES_PER_BLOCK = int(SAMPLING_RATE*INPUT_BLOCK_TIME)
 
 # if we get this many loud blocks in a row, raise the tap threshold
@@ -51,6 +53,12 @@ def get_mic_input():
     return input_stream
 
 
+def determine_pitch(raw_samples):
+    # SoundAnalyse needs array of samples in 16-bit format for pitch detection
+    samples = np.fromstring(raw_samples, dtype=np.int16)
+    return analyse.detect_pitch(samples)
+
+
 if __name__ == '__main__':
     tap_threshold = INITIAL_TAP_THRESHOLD                  
     noisy_count = MAX_TAP_BLOCKS+1                          
@@ -61,13 +69,13 @@ if __name__ == '__main__':
 
     for i in range(1000):
         try:                
-            block = input_stream.read(INPUT_FRAMES_PER_BLOCK)         
+            samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)         
         except IOError, e:                              
             print e
             noisy_count = 1
             continue
 
-        amplitude = get_rms(block)
+        amplitude = get_rms(samples)
         if amplitude > tap_threshold:
             # too loud to be a tap, adjust threshold if this keeps happening
             quiet_count = 0
@@ -78,7 +86,8 @@ if __name__ == '__main__':
         else:
             if 1 <= noisy_count <= MAX_TAP_BLOCKS:
                 tap_count += 1
-                print '{}: TAP!'.format(tap_count)
+                pitch = determine_pitch(samples)
+                print '{count}: TAP! @ {pitch} Hz'.format(count=tap_count, pitch=(pitch or 'no pitch'))
             # too quiet
             noisy_count = 0
             quiet_count += 1
