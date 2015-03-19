@@ -3,7 +3,6 @@
 import mido
 
 
-def pitch_to_midi(pitch, amplitude):
-    note = max(int(pitch % 127), 50)
-    on = mido.Message('note_on', note=note, velocity=64)
+def pitch_to_midi(note, amplitude):
+    on = mido.Message('note_on', note=int(note), velocity=64)
     return on

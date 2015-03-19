@@ -81,6 +81,7 @@ if __name__ == '__main__':
             continue
 
         amplitude = get_rms(samples)
+        pitch = determine_pitch(samples)
         if amplitude > tap_threshold:
             # too loud to be a tap, adjust threshold if this keeps happening
             quiet_count = 0
@@ -91,9 +92,9 @@ if __name__ == '__main__':
         else:
             if 1 <= noisy_count <= MAX_TAP_BLOCKS:
                 tap_count += 1
-                pitch = determine_pitch(samples)
                 # output.send(mido.Message('stop'))
-                note_on = pitch_to_midi(pitch, amplitude)
+                note = analyse.midinum_from_pitch(pitch)
+                note_on = pitch_to_midi(note, amplitude)
                 output.send(note_on)
 
                 print '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
