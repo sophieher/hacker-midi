@@ -1,7 +1,6 @@
 body {
     padding: 0;
     margin: 0;
-    background: url(http://i.imgur.com/jaPvqFX.gif) 50% 0% / cover;
 }
 
 h1, h2, h3, button {
@@ -62,7 +61,11 @@ h1 {
     float: right;
     width: 30%;
 }
-
+.main-center {
+    text-align: center;
+    width: 70%;
+    margin: 0 auto;
+}
 .brand {
     margin-bottom: 60px;
 }
@@ -85,7 +88,7 @@ h1 {
 h2, h3 {
     font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 400;
-    margin-bottom: 50px;
+    margin-bottom: 50px;f
     font-size: 18px;
     line-height: 30px;
 }
@@ -103,6 +106,23 @@ h2, h3 {
       width: 100vw;
       height: 100vh;
       position: fixed;
-      opacity: 0.7;
       z-index: -1;
+}
+.chart img {
+    max-width: 100%;
+    margin-bottom: 300px;
+}
+.chart h1 {
+    padding: 1em;
+    margin: 0;
+}
+.main-center .logo {
+    margin: 0;
+    padding: 30px;
+}
+.main-center {
+padding-bottom: 150px
+}
+a {
+    text-decoration: none;
 }
