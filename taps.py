@@ -94,10 +94,12 @@ if __name__ == '__main__':
                 tap_count += 1
                 # output.send(mido.Message('stop'))
                 note = analyse.midinum_from_pitch(pitch)
-                note_on = pitch_to_midi(note, amplitude)
+                velocity = int(math.log(amplitude) * -20) - 32
+                note_on = mido.Message('note_on', note=60, velocity=velocity)
+                # output.send(note_on)
+                song.append(note_on)
                 output.send(note_on)
-
-                print '{count}: TAP! @ {pitch} Hz {msg}'.format(count=tap_count, pitch=(pitch or 'no pitch'), msg=note_on)
+                print '{count}: TAP! @ {pitch} Hz velocity: {velocity}'.format(count=tap_count, pitch=(math.ceil(pitch) or 'no pitch'), msg=note_on, amplitude=amplitude, velocity=velocity)
             # too quiet
             noisy_count = 0
             quiet_count += 1
