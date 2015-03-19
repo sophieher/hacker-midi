@@ -16,44 +16,44 @@ SAMPLING_RATE = 44100
 
 # Adjust as necessary
 INPUT_BLOCK_TIME = 0.05
-INITIAL_TAP_THRESHOLD = 0.010 # Default value is 0.010
-INPUT_FRAMES_PER_BLOCK = int(SAMPLING_RATE*INPUT_BLOCK_TIME)
+INITIAL_TAP_THRESHOLD = 0.010  # Default value is 0.010
+INPUT_FRAMES_PER_BLOCK = int(SAMPLING_RATE * INPUT_BLOCK_TIME)
 
 # if we get this many loud blocks in a row, raise the tap threshold
-OVERSENSITIVE = 15.0/INPUT_BLOCK_TIME
+OVERSENSITIVE = 15.0 / INPUT_BLOCK_TIME
 # if we get this many quiet blocks in a row, decrease the tap threshold
-UNDERSENSITIVE = 120.0/INPUT_BLOCK_TIME
+UNDERSENSITIVE = 120.0 / INPUT_BLOCK_TIME
 
 # if the noise was longer than this many blocks, it's not a 'tap'
-MAX_TAP_BLOCKS = 0.15/INPUT_BLOCK_TIME 
+MAX_TAP_BLOCKS = 0.15 / INPUT_BLOCK_TIME
 
 
 def get_rms(block):
     # From PyAudio examples
-    # RMS amplitude is defined as the square root of the 
+    # RMS amplitude is defined as the square root of the
     # mean over time of the square of the amplitude.
-    # so we need to convert this string of bytes into 
+    # so we need to convert this string of bytes into
     # a string of 16-bit samples...
-    SHORT_NORMALIZE = (1.0/32768.0)
-    
-    count = len(block)/2
-    format = "%dh"%(count)
+    SHORT_NORMALIZE = (1.0 / 32768.0)
+
+    count = len(block) / 2
+    format = "%dh" % (count)
     shorts = struct.unpack(format, block)
 
     # iterate over the block.
     sum_squares = 0.0
     for sample in shorts:
-    # sample is a signed short in +/- 32768. 
-    # normalize it to 1.0
+        # sample is a signed short in +/- 32768.
+        # normalize it to 1.0
         n = sample * SHORT_NORMALIZE
-        sum_squares += n*n
+        sum_squares += n * n
 
-    return math.sqrt( sum_squares / count )
+    return math.sqrt(sum_squares / count)
 
 
 def get_mic_input():
     pa = pyaudio.PyAudio()
-    input_stream = pa.open(format=pyaudio.paInt16, channels=1, rate=SAMPLING_RATE,  input=True, frames_per_buffer=INPUT_FRAMES_PER_BLOCK)
+    input_stream = pa.open(format=pyaudio.paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=INPUT_FRAMES_PER_BLOCK)
     return input_stream
 
 
@@ -64,8 +64,8 @@ def determine_pitch(raw_samples):
 
 
 if __name__ == '__main__':
-    tap_threshold = INITIAL_TAP_THRESHOLD                  
-    noisy_count = MAX_TAP_BLOCKS+1                          
+    tap_threshold = INITIAL_TAP_THRESHOLD
+    noisy_count = MAX_TAP_BLOCKS + 1
     quiet_count = 0
     tap_count = 0
 
@@ -73,9 +73,9 @@ if __name__ == '__main__':
     output = mido.open_output()
 
     while True:
-        try:                
-            samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)         
-        except IOError, e:                              
+        try:
+            samples = input_stream.read(INPUT_FRAMES_PER_BLOCK)
+        except IOError as e:
             print e
             noisy_count = 1
             continue
